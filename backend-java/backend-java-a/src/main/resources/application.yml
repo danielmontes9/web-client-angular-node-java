@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: backend-java-a
+
+server:
+  port: 8081
+
+jwt:
+    secret: bcc7bd0a2f1c24d1be84e55e40e2cdfdd300d761164f6ffd0b3e9a4c842634a1
+    accessTokenTtl: 900000 # 15 minutes
+    refreshTokenTtl: 10080000 # 7 days
