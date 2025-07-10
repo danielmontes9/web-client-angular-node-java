@@ -24,10 +24,16 @@ export class LoginComponent {
     console.log('Password:', this.password);
 
     this._authService.login(this.email, this.password, this.microservice)
-      .subscribe(reponse => {
-        if(reponse && reponse.accessToken) {
-          this._router.navigate(['/home']);
-          alert('Login successful');
+      .subscribe({
+        next: (response) => {
+          if(response && response.accessToken) {
+            this._router.navigate(['/home']);
+            alert('Login successful');
+          }
+        },
+        error: (error) => {
+          console.error('Login error:', error);
+          alert('Login failed. Please check your credentials.');
         }
       });
   }
