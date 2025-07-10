@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const logger = require('morgan');
+const cors = require('cors');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
@@ -12,6 +13,14 @@ if (!TARGET_A && !TARGET_B) {
   console.error("TARGET_BACKEND is not defined in .env");
   process.exit(1);
 }
+
+// Enable CORS for Angular frontend
+app.use(cors({
+  origin: ['http://localhost:4200', 'http://127.0.0.1:4200'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 
 app.use(logger('dev'));
 // app.use(express.json());
