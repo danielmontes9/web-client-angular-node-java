@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,10 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
 
-  constructor(private _authService: AuthService) {}
+  constructor(
+    private _authService: AuthService,
+    private _router: Router
+  ) {}
 
   login(): void {
     console.log('Microservice:', this.microservice);
@@ -21,7 +25,10 @@ export class LoginComponent {
 
     this._authService.login(this.email, this.password, this.microservice)
       .subscribe(reponse => {
-        console.log('Login successful:', reponse);
+        if(reponse && reponse.accessToken) {
+          this._router.navigate(['/home']);
+          alert('Login successful');
+        }
       });
   }
 }
