@@ -1,19 +1,17 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { catchError, map, of } from 'rxjs';
+import { of } from 'rxjs';
 
-export const authGuard: CanActivateFn = (route, state) => {
+export const loginGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
   const token = authService.getAccessToken();
-
-  if (!token) {
-    // If no token, redirect to login
-    router.navigate(['/login']);
-    return false;
+  if (token) {
+    router.navigate(['/home']);
+    return of(false);
   }
 
-  return true;
+  return of(true);
 };
