@@ -10,6 +10,7 @@ export class AuthService {
 
   private readonly accessTokenKey : string = "accessToken";
   private readonly refreshTokenKey: string = "refreshToken";
+  private readonly microserviceKey: string = 'microserviceEndpoint';
 
   constructor(private _httpClient: HttpClient) { }
 
@@ -20,8 +21,14 @@ export class AuthService {
                 tap((res) => {
                   localStorage.setItem(this.accessTokenKey , res.accessToken);
                   localStorage.setItem(this.refreshTokenKey, res.refreshToken);
+                  localStorage.setItem(this.microserviceKey, microservice ? 'B' : 'A');
                 })
               );;
+  }
+
+  getMicroserviceEndpoint(): 'A' | 'B' {
+    const microservice = localStorage.getItem(this.microserviceKey);
+    return microservice === 'B' ? 'B' : 'A';
   }
 
   getAccessToken(): string {
@@ -41,6 +48,7 @@ export class AuthService {
       tap((res) => {
         localStorage.setItem(this.accessTokenKey, res.accessToken);
         localStorage.setItem(this.refreshTokenKey, res.refreshToken);
+        localStorage.setItem(this.microserviceKey, microservice ? 'B' : 'A');
       }),
       catchError(() => of(null))
     );
@@ -49,5 +57,6 @@ export class AuthService {
   logout() {
     localStorage.removeItem(this.accessTokenKey);
     localStorage.removeItem(this.refreshTokenKey);
+    localStorage.removeItem(this.microserviceKey);
   }
 }
