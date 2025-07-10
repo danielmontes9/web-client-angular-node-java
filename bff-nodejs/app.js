@@ -5,9 +5,10 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 
-const TARGET = process.env.TARGET_BACKEND;
+const TARGET_A = process.env.TARGET_BACKEND_A;
+const TARGET_B = process.env.TARGET_BACKEND_B;
 
-if (!TARGET) {
+if (!TARGET_A && !TARGET_B) {
   console.error("TARGET_BACKEND is not defined in .env");
   process.exit(1);
 }
@@ -17,9 +18,20 @@ app.use(logger('dev'));
 
 function proxy(path) {
   return createProxyMiddleware({
-    target: TARGET,
+    target: TARGET_A,
     changeOrigin: true,
-    pathRewrite: (pathReq) => pathReq.replace(/^\/(auth|resource)/, '/$1'),
+    // pathRewrite: (pathReq) => pathReq.replace(/^\/(auth|resource)/, '/$1'),
+    pathRewrite: (pathReq) => pathReq.replace(/\/(A|B)$/, ''),
+    router: (req, res) => {
+      const microserviceName = req.params.microservice;
+      if (microserviceName === 'A') {
+        return TARGET_A;
+      } else if (microserviceName === 'B') {
+        return TARGET_B;
+      } else {
+        console.error(`Unknown microservice: ${microserviceName}`);
+      }
+    },
     onProxyReq: (proxyReq, req) => {
       if (req.body && Object.keys(req.body).length) {
         const bodyData = JSON.stringify(req.body);
@@ -39,9 +51,9 @@ function proxy(path) {
 }
 
 // Routes
-app.post('/auth/login', proxy('/auth/login'));
-app.post('/auth/refresh', proxy('/auth/refresh'));
-app.get('/resource', proxy('/resource'));
+app.post('/auth/login/:microservice', proxy('/auth/login'));
+app.post('/auth/refresh/:microservice', proxy('/auth/refresh'));
+app.get('/resource/:microservice', proxy('/resource'));
 
 // Fallback 404
 app.use((req, res) => {
