@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,11 +12,16 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
 
-  constructor() {}
+  constructor(private _authService: AuthService) {}
 
-  login() {
+  login(): void {
     console.log('Microservice:', this.microservice);
     console.log('Email:', this.email);
     console.log('Password:', this.password);
+
+    this._authService.login(this.email, this.password, this.microservice)
+      .subscribe(reponse => {
+        console.log('Login successful:', reponse);
+      });
   }
 }
