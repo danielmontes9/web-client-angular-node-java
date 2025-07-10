@@ -92,3 +92,8 @@ The app will run at: http://localhost:3000
   npx ng serve
 ```
 The app will run at: http://localhost:4200
+
+
+## Authentication Credentials
+- Email: user@example.com
+- Password: password
