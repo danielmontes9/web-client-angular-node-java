@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, of, tap } from 'rxjs';
 import { AuthResponse } from '../models/AuthResponse.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class AuthService {
 
   login(email: string, password: string, microservice: boolean = false) {
     const body = { email, password };
-    return this._httpClient.post<AuthResponse>('http://localhost:3000/auth/login/' + (microservice == false ? 'A' : 'B'), body)
+    return this._httpClient.post<AuthResponse>(`${environment.bffUrl}/auth/login/${microservice ? 'B' : 'A'}`, body)
               .pipe(
                 tap((res) => {
                   localStorage.setItem(this.accessTokenKey , res.accessToken);
@@ -43,8 +44,8 @@ export class AuthService {
     const token = this.getRefreshToken();
     if (!token) return of(null);
 
-    const endpoint = `http://localhost:3000/auth/refresh/${microservice ? 'B' : 'A'}`;
-    return this._httpClient.post<any>(endpoint, { refreshToken: token }).pipe(
+    const endpoint = `${environment.bffUrl}/auth/refresh/${microservice ? 'B' : 'A'}`;
+    return this._httpClient.post<AuthResponse>(endpoint, { refreshToken: token }).pipe(
       tap((res) => {
         localStorage.setItem(this.accessTokenKey, res.accessToken);
         localStorage.setItem(this.refreshTokenKey, res.refreshToken);

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Item } from '../models/Item.model';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class ResourceService {
   ) { }
 
   getResource(): Observable<Item> {
-    return this._httpClient.get<Item>(`http://localhost:3000/resource/${this._authService.getMicroserviceEndpoint()}`);
+    return this._httpClient.get<Item>(`${environment.bffUrl}/resource/${this._authService.getMicroserviceEndpoint()}`);
   }
 
 }
